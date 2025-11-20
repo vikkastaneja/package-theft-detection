@@ -4,3 +4,6 @@ scikit-learn
 joblib
 pytest
 pytest-cov
+torch
+torchvision
+timm
