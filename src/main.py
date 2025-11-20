@@ -92,6 +92,6 @@ def main(warmup_target=50, max_frames=None, frame_skip=5):
     cv2.destroyAllWindows()
     print("Stopped — model saved for next run.")
 
-
+# Call main with default parameters
 if __name__ == "__main__":
     main()
