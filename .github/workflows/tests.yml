@@ -2,31 +2,63 @@ name: CI - Tests & Coverage
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
+      - rasp
+      
   pull_request:
     branches: [ master ]
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    
+    env:
+      PYTHONUNBUFFERED:"1"
+      FORCE_FAKE_CAMERA: "true"
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Install System dependencies:
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            python3-opencv \
+            libatlas-base-dev \
+            libopenblas-dev \
+            liblapack-dev \
+            libffi-dev \
+            libjpeg-dev \
+            libpng-dev \
+            libtiff-dev \
+            libavcodec-dev \
+            libavformat-dev \
+            libswscale-dev \
+            libxvidcore-dev \
+            libx264-dev \
+            libgtk-3-dev \
+            gstreamer1.0-tools \
+            gstreamer1.0-plugins-base \
+            gstreamer1.0-plugins-good \
+            gstreamer1.0-plugins-bad \
+            gstreamer1.0-plugins-ugly 
+      
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
-      - name: Install dependencies
+      - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install pytest pytest-cov
 
       - name: Run tests with coverage
         run: |
-          pytest --cov=src --cov-report=xml --cov-report=html
+          pytest --cov=src --cov-report=xml --cov-report=html --maxfail=1 -q
 
       - name: Upload coverage HTML artifact
         uses: actions/upload-artifact@v4
